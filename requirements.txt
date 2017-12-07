@@ -1,0 +1,4 @@
+django==1.8.16
+Pillow==4.3.0
+qrcode==5.3
+requests==2.18.4

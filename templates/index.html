@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<img id="autocode-img" onclick="updateimg(this);" src="/code/?pro_id={{ pro_id }}"
+     title="点击刷新">
+</body>
+<script>
+    function updateimg(img) {
+        img.src = img.src + "?";
+    }
+</script>
+</html>
