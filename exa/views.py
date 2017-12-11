@@ -199,22 +199,51 @@ def notify_url_event(request):
     Args:
            
     Returns:
+        
+        <xml><appid><![CDATA[wx6509f6e240dfae50]]></appid>
+            <bank_type><![CDATA[CFT]]></bank_type>
+            <cash_fee><![CDATA[1]]></cash_fee>
+            <fee_type><![CDATA[CNY]]></fee_type>
+            <is_subscribe><![CDATA[N]]></is_subscribe>
+            <mch_id><![CDATA[14323929292]]></mch_id>
+            <nonce_str><![CDATA[aCJv0SAwKY5Cxfi34mtCEM5SdNKexuXgnW]]></nonce_str>
+            <openid><![CDATA[oHWl5w5M34hYM-ox2mn6Xatse7yCTs]]></openid>
+            <out_trade_no><![CDATA[aHQDJyacUSGC]]></out_trade_no>
+            <result_code><![CDATA[SUCCESS]]></result_code>
+            <return_code><![CDATA[SUCCESS]]></return_code>
+            <sign><![CDATA[C4F8B5B17A3E6203491A3B790A1D87ECEA]]></sign>
+            <time_end><![CDATA[201712114144230]]></time_end>
+            <total_fee>1</total_fee>
+            <trade_type><![CDATA[NATIVE]]></trade_type>
+            <transaction_id><![CDATA[4200000031201712112434025551875]]></transaction_id>
+        </xml>
 
     '''
     print("有回调返回")
     params = MxPay.to_dict(request.body)
     if params.get("return_code") == "SUCCESS":
         # 说明通信正常
-        out_trade_no = params.get("params")
-        if out_trade_no:
-            if params.get("result_code", None) == "SUCCESS":
-                # 验证签名
-                if MxPay.check(params, settings.WX_MCH_KEY):
-                    # 返回的参数：https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_7
-                    # 开始处理逻辑
-                    pass
-        else:
-            print("{0}:{1}".format(params.get("err_code"), params.get("err_code_des")))
+
+        if MxPay.check(params, settings.WX_MCH_KEY):  # 验证签名
+
+            if params.get("result_code", None) == "SUCCESS":  # 业务正常
+                # 商户订单号
+                out_trade_no = params.get("out_trade_no")
+
+                # 微信支付订单号（官方建议使用此号作为向微信查数据的凭证）
+                transaction_id = params.get("out_trade_no")
+
+                #  操作后台
+
+
+                # 在处理好之后，一定要返回给微信
+                xml_str = MxPay.get_xml({"return_code": "SUCCESS"})
+                return HttpResponse(xml_str)
+
+
+
+            else:
+                print("{0}:{1}".format(params.get("err_code"), params.get("err_code_des")))
     else:
         # 类似于appid,mch_id等有错误
         print(params.get("return_msg").encode("utf-8"))

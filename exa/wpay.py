@@ -64,7 +64,8 @@ class MxPay(object):
         char = string.ascii_letters + string.digits
         return "".join(random.choice(char) for _ in range(length))
 
-    def get_xml(self, params, is_compatible=False):
+    @staticmethod
+    def get_xml(params, is_compatible=False):
         # 拼接参数的xml字符串
         request_xml_str = '<xml>'
         for key, value in params.items():
@@ -152,18 +153,6 @@ class MxPay(object):
             except urllib2.HTTPError, e:
                 resp = e
             res_content_dict = self.to_dict(resp.read())
-
-        # 这里可以直接返回res_content_dict，交由具体的view去处理（一定要做做签名验证），下面的代码仅作代码调式
-        if res_content_dict.get("return_code") == "SUCCESS":
-            # 说明有正常返回
-            if res_content_dict.get("result_code", None) == "SUCCESS":
-                if self.check(res_content_dict, self.WX_MCH_KEY):
-                    return res_content_dict
-            else:
-                print("{0}:{1}".format(res_content_dict.get("err_code"), res_content_dict.get("err_code_des").encode("utf-8")))
-        else:
-            # 类似于appid,mch_id等有错误
-            print("return_msg:%s" % res_content_dict.get("return_msg").encode("utf-8"))
 
         return res_content_dict
 
