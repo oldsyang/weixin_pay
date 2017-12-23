@@ -265,9 +265,11 @@ def home(request):
     print("out_trade_no:", out_trade_no)
     mpay = MxPay()
     return_data_dict, wxorder_return_code = mpay.create_order(total_fee=1, spbill_create_ip=request.META['REMOTE_ADDR'],
-                                                              out_trade_no=out_trade_no, body="原子钟微信测试",
+                                                              out_trade_no=out_trade_no, body="345345微信测试",
                                                               product_id=product_id,
                                                               trade_type="NATIVE")
+
+
     print("wxorder_return_code:", wxorder_return_code)
     request.session["code_info"] = {product_id: wxorder_return_code}
     return render(request, "index.html", {"pro_id": product_id})

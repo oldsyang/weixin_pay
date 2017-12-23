@@ -93,12 +93,10 @@ class MxPay(object):
         '''
 
         raw = [(k, str(params[k]) if isinstance(params[k], (int, float)) else params[k]) for k in sorted(params.keys())]
-        print("raw:", raw)
         if is_compatible:
             s = "&".join("=".join(kv) for kv in raw)
         else:
             s = "&".join("=".join(kv) for kv in raw if kv[1])
-        print("s:", s)
         s += "&key={0}".format(key)
         return hashlib.md5(s.encode("utf-8") if isinstance(s, unicode) else s).hexdigest().upper()
 
